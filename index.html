@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>장선생 한의학 사전</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: 조용하고 정확한 업무 도구, 먹과 인주
+   IDEA: 한의원 차트 — 먹 글씨 한자와 붉은 인주
+   PICTURE: 검색창 + 장부·오행 한자 자판, 크게 띄운 정자체 한자
+   COLOUR/TYPE: 흰 종이, 먹색 머리띠, 補는 쪽빛, 瀉는 인주색 / 한자 Noto Serif KR, 글 Noto Sans KR
+   LAYOUT: 한 줄 기둥 760px, 결과 목록, 전체 화면 상세 시트 */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#121314);--ink:light-dark(#18191b,#ecebe8);--sub:light-dark(#5d6166,#a6a9ad);--line:light-dark(#e3e3df,#2b2d30);--card:light-dark(#f5f5f2,#1b1d1f);--bo:light-dark(#2944a0,#9cb0ff);--sa:light-dark(#c2311e,#ff8f7c);--bos:light-dark(#eef1fb,#1a2140);--sas:light-dark(#fcefec,#3a1d18);--warn:light-dark(#8a5a00,#f2c46b);--mok:light-dark(#17785a,#5ed1a0);--hwa:light-dark(#c62a1f,#ff7b6c);--to:light-dark(#a87400,#f0c24a);--geum:light-dark(#6c727d,#dde0e5);--su:light-dark(#1c2a52,#a8b8e0);--warns:light-dark(#fff6e0,#33280f)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 'Noto Sans KR',system-ui,sans-serif;overflow-x:clip}
+.hj{font-family:'Noto Serif KR','AppleMyungjo','Batang',serif;font-weight:700}
+.wrap{max-width:760px;margin:0 auto}
+.c-mok{color:var(--mok)}.c-hwa{color:var(--hwa)}.c-to{color:var(--to)}.c-geum{color:var(--geum)}.c-su{color:var(--su)}
+header .c-mok{color:#5ed1a0}header .c-hwa{color:#ff7b6c}header .c-to{color:#f0c24a}header .c-geum{color:#e4e6ea}header .c-su{color:#a8b8e0}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;padding:10px max(4vw,14px) 0;font-size:14px;color:var(--sub)}.legend .hj{font-size:20px;margin-right:3px}
+header{background:#17181a;color:#f2f1ec;padding:18px max(4vw,14px) 14px}
+h1{font-size:20px;margin:0 0 10px;font-weight:700}
+h1 .hj{color:#ff8f7c;margin-right:6px}
+.sbox{display:flex;gap:8px}
+#q{flex:1;font:18px 'Noto Sans KR',sans-serif;padding:10px 14px;border-radius:10px;border:0;background:#fff;color:#111;min-height:50px}
+#q:focus{outline:3px solid #ff8f7c}
+.btn{min-height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:500;cursor:pointer}
+.btn.primary{background:var(--bo);color:#fff;border-color:transparent}
+.btn.danger{color:var(--sa)}
+header .btn{background:#2b2d30;color:#fff;border-color:#3d4044}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--bo);outline-offset:2px}
+.keys{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-top:10px}
+.keys.el{grid-template-columns:repeat(5,minmax(0,1fr)) 1.2fr 1.2fr}
+.key{min-height:46px;border-radius:8px;border:1px solid #3d4044;background:#232528;color:#f2f1ec;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;font:inherit;padding:2px}
+.key b{font-family:'Noto Serif KR',serif;font-size:18px}
+.key small{font-size:11px;opacity:.8}
+.key.e{background:#3a231d;border-color:#62392f}
+.key.fn{font-size:13px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;padding:14px max(4vw,14px) 0}
+.tab{min-height:44px;padding:0 14px;border-radius:22px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;cursor:pointer}
+.tab[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+main{padding:6px max(4vw,14px) 40px}
+h2{font-size:24px;line-height:1.2;margin:14px 0 6px}
+h3.g{font-size:14px;color:var(--sub);font-weight:500;margin:22px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.row{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:10px 12px;margin:0 0 6px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;cursor:pointer;min-height:56px}
+.row:hover{background:var(--card)}
+.big{font-size:30px;line-height:1;min-width:2.2em;text-align:center}
+.rt{flex:1;display:flex;flex-direction:column}
+.rt b{font-size:17px}.rt small{color:var(--sub);font-size:13px}
+.var{font-size:13px;color:var(--warn)}
+.warnb{flex:none;width:26px;height:26px;border-radius:50%;background:var(--warns);color:var(--warn);display:grid;place-items:center;font-weight:700;font-size:14px}
+.row.rx{flex-direction:column;align-items:stretch;gap:6px}
+.rx .rt{flex-direction:row;flex-wrap:wrap;gap:4px 8px;align-items:baseline}
+.rx em{font-style:normal;color:var(--sub);font-size:14px}
+.rp{display:flex;flex-wrap:wrap;gap:6px}
+.pt{padding:3px 8px;border-radius:6px;font-size:15px;white-space:nowrap;background:var(--card);border:1px solid var(--line)}
+.pt i{font-style:normal;font-size:12px;font-weight:700;padding:0 5px;border-radius:4px;margin-right:5px;vertical-align:2px}
+.pt.bo i{background:var(--ink);color:var(--bg)}.pt.sa i{border:1px solid var(--ink)}
+.pt .hj{font-size:17px;margin-right:4px}
+
+.tag{font-style:normal;font-size:12px;padding:1px 7px;border-radius:10px;background:var(--warns);color:var(--warn)}
+.notice{background:var(--warns);color:var(--ink);border-radius:10px;padding:10px 14px;margin:12px 0;font-size:15px}
+.hint{color:var(--sub);font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{min-height:40px;padding:4px 12px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:15px;cursor:pointer}
+.chip .hj{font-size:17px;margin-right:3px}
+.foot{color:var(--sub);font-size:13px;margin-top:30px;border-top:1px solid var(--line);padding-top:12px}
+#sheet{position:fixed;inset:0;background:var(--bg);z-index:20;overflow:auto;overscroll-behavior:contain}
+#sheet[hidden]{display:none}
+.sbar{position:sticky;top:0;display:flex;justify-content:space-between;padding:10px max(4vw,14px);background:var(--bg);border-bottom:1px solid var(--line);z-index:2}
+.sbody{padding:4px max(4vw,14px) 60px}
+.hero{text-align:center;padding:18px 0 10px}
+.giant{line-height:1.05;letter-spacing:.02em;overflow-wrap:anywhere}
+.read{font-size:30px;font-weight:700;margin:4px 0 12px}
+.info{font-size:16px;margin:12px 0}
+.wbox{background:var(--warns);border-radius:10px;padding:10px 14px;margin:12px 0;font-size:15px}
+.wbox b{color:var(--warn)}
+.vars{border:1px dashed var(--warn);border-radius:10px;padding:8px 14px;margin:12px 0}
+.lbl{font-size:13px;color:var(--sub);margin:4px 0}
+.vline{display:flex;align-items:center;gap:12px;padding:4px 0}
+.vh{font-size:36px}
+.vline span:nth-child(2){flex:1}
+.kind{color:var(--sub);margin:12px 0 0;font-size:14px}
+.hero.sh{border-bottom:1px solid var(--line);padding-bottom:16px}.hero.sh .lbl{margin:0}
+.short{font-size:17px}.short .hj{font-size:20px}
+.pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.pgrid section{border-radius:14px;padding:10px}
+.pgrid section{background:var(--card);border:1px solid var(--line)}
+.pgrid h3{margin:0 0 8px;font-size:16px}
+.pgrid h3 i{font-style:normal;font-size:13px;padding:1px 7px;border-radius:5px;margin-right:6px}.pgrid .bo h3 i{background:var(--ink);color:var(--bg)}.pgrid .sa h3 i{border:1px solid var(--ink)}
+.pc{background:var(--bg);border-radius:10px;padding:8px;margin-bottom:8px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pch{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;text-align:center;width:100%}
+.ph{font-size:clamp(34px,11vw,52px);line-height:1.1}
+.pr{font-size:19px;font-weight:700}
+.pc small{color:var(--sub);font-size:13px}
+.pc .btn{min-height:40px;width:100%}
+form label,fieldset{display:block;margin:14px 0;border:0;padding:0}
+form input,form select,form textarea{display:block;width:100%;font:16px 'Noto Sans KR',sans-serif;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);margin-top:6px;min-height:46px}
+legend{font-weight:700}
+
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#17181a;color:#fff;padding:10px 18px;border-radius:22px;z-index:30;font-size:15px;max-width:90vw;opacity:0;transition:opacity .2s;pointer-events:none}
+#toast.on{opacity:1}
+@media(max-width:420px){.keys{grid-template-columns:repeat(4,minmax(0,1fr))}.keys.el{grid-template-columns:repeat(5,minmax(0,1fr))}.key.fn{grid-column:span 2}.pgrid{gap:8px}}
+@media(prefers-reduced-motion:reduce){#toast{transition:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1><span class="hj">鍼</span>장선생 한의학 사전</h1>
+  <div class="sbox"><input id="q" type="search" placeholder="예: 비화목, 금토, 경거" autocomplete="off" aria-label="검색"><button class="btn" id="clr" type="button">지움</button></div>
+  <div class="keys" id="kO" aria-label="장부 자판"></div>
+  <div class="keys el" id="kE" aria-label="오행 자판"></div>
+</div></header>
+<div class="wrap">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-tab="오행">① 오행</button>
+    <button class="tab" data-tab="장부">② 오장육부</button>
+    <button class="tab" data-tab="처방">③ 사암침 처방</button>
+    <button class="tab" data-tab="한자">④ 꼭 알아야 할 한자</button>
+  </nav>
+  <p class="legend" aria-label="오행 색">한자 색 = 오행 · <span><span class="hj c-mok">木</span>청</span><span><span class="hj c-hwa">火</span>적</span><span><span class="hj c-to">土</span>황</span><span><span class="hj c-geum">金</span>백</span><span><span class="hj c-su">水</span>흑</span></p>
+  <main id="res"></main>
+  <p class="foot wrap" style="padding:12px max(4vw,14px) 30px">처방은 사암침 공식(정격·승격·한격·열격)대로 자동으로 만든 것이에요. 원장님 검수 전에는 참고용으로 써 주세요. 한자 옆 <b style="color:var(--warn)">=</b> 표시는 같은 뜻의 다른 글자(이체자)예요. 청구 프로그램이 쓰는 쪽으로 입력하세요.</p>
+</div>
+<div id="sheet" hidden role="dialog" aria-modal="true">
+  <div class="sbar"><button class="btn" id="back" type="button">← 뒤로</button><button class="btn" id="close" type="button">닫기 ✕</button></div>
+  <div class="sbody wrap" id="sb"></div>
+</div>
+<div id="toast" role="status"></div>
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ORD=['목','화','토','금','수'];
+const E={목:['木','나무'],화:['火','불'],토:['土','흙'],금:['金','쇠'],수:['水','물']};
+const mom=e=>ORD[(ORD.indexOf(e)+4)%5],kid=e=>ORD[(ORD.indexOf(e)+1)%5];
+const KE={목:'금',화:'수',토:'목',금:'화',수:'토'};
+const EC={목:'mok',화:'hwa',토:'to',금:'geum',수:'su'};
+const hc=i=>{const e=i&&(i.e||(i.m&&i.t==='처방'&&!i.custom?i.m.e:''));return e?' c-'+EC[e]:''};
+const ROLE=['정혈 井穴','형혈 滎穴','수혈 兪穴','경혈 經穴','합혈 合穴'];
+const WARN={
+'膽':'흘림체에서 膀(방)·腎(신)과 비슷해 보일 수 있어요. 약자로 胆이라고도 써요.',
+'膀胱':'膀(방)은 흘림체에서 膽(담)과 비슷해 보일 수 있어요.',
+'腎':'賢(현)·堅(견)과 모양이 비슷해요. 아래쪽이 月이면 腎이에요.',
+'脾':'胛(갑)과 비슷해요. 오른쪽이 卑(비)예요.',
+'少海':'심경 少海(소해)와 소장경 小海(소해)는 읽기가 같아요. 少(적을 소)는 4획, 小(작을 소)는 3획이에요.',
+'小海':'소장경 小海와 심경 少海는 읽기가 같아요. 小는 3획, 少는 4획이에요.',
+'陰谷':'신경 陰谷(음곡)과 소장경 陽谷(양곡)은 한 글자 차이예요.',
+'陽谷':'소장경 陽谷(양곡)과 신경 陰谷(음곡)은 한 글자 차이예요.',
+'陽輔':'輔(도울 보)는 補(보할 보)와 다른 글자예요.',
+'補':'陽輔의 輔(도울 보)와 다른 글자예요. 補는 왼쪽이 衤(옷의변)예요.',
+'瀉':'寫(베낄 사)에 氵(삼수변)가 붙은 글자예요.',
+'土':'士(선비 사)와 헷갈리기 쉬워요. 土는 아래 가로획이 더 길어요.',
+'木':'本(근본 본)과 헷갈리기 쉬워요. 本은 아래에 짧은 가로획이 하나 더 있어요.',
+'金':'全(온전 전)과 헷갈리기 쉬워요. 金은 아래에 짧은 점 두 개가 있어요.',
+'水':'永(길 영)과 헷갈리기 쉬워요.',
+'太白':'太(클 태, 점 있음)와 大(큰 대, 점 없음)를 구분하세요. 같은 비경의 大都와 헷갈리기 쉬워요.',
+'大都':'大(큰 대)와 太(클 태)를 구분하세요.',
+'太衝':'太(태)와 大(대)를 구분하세요. 같은 간경에 大敦(대돈)이 있어요.',
+'大敦':'大(대)와 太(태)를 구분하세요. 같은 간경에 太衝(태충)이 있어요.',
+'滎穴':'滎(형)은 榮(영화 영)과 비슷해요. 아래가 水면 滎이에요.'};
+const MER=[
+['간','肝','목',1,'간','족궐음간경','足厥陰肝經','','大敦 대돈|行間 행간|太衝 태충 太冲|中封 중봉|曲泉 곡천'],
+['담','膽','목',0,'쓸개','족소양담경','足少陽膽經','胆','足竅陰 족규음 足窍陰|俠谿 협계 俠溪,侠溪|足臨泣 족임읍|陽輔 양보|陽陵泉 양릉천'],
+['심','心','화',1,'심장','수소음심경','手少陰心經','','少衝 소충 少冲|少府 소부|神門 신문|靈道 영도|少海 소해'],
+['소장','小腸','화',0,'작은창자','수태양소장경','手太陽小腸經','','少澤 소택|前谷 전곡|後谿 후계 後溪|陽谷 양곡|小海 소해'],
+['비','脾','토',1,'지라','족태음비경','足太陰脾經','','隱白 은백|大都 대도|太白 태백|商丘 상구|陰陵泉 음릉천'],
+['위','胃','토',0,'밥통','족양명위경','足陽明胃經','','厲兌 여태|內庭 내정|陷谷 함곡|解谿 해계 解溪|足三里 족삼리'],
+['폐','肺','금',1,'허파','수태음폐경','手太陰肺經','','少商 소상|魚際 어제|太淵 태연|經渠 경거|尺澤 척택'],
+['대장','大腸','금',0,'큰창자','수양명대장경','手陽明大腸經','','商陽 상양|二間 이간|三間 삼간|陽谿 양계 陽溪|曲池 곡지'],
+['신','腎','수',1,'콩팥','족소음신경','足少陰腎經','','湧泉 용천 涌泉|然谷 연곡|太谿 태계 太溪|復溜 부류|陰谷 음곡'],
+['방광','膀胱','수',0,'오줌보','족태양방광경','足太陽膀胱經','','至陰 지음|足通谷 족통곡|束骨 속골|崑崙 곤륜|委中 위중'],
+['심포','心包','화',1,'심장을 싸는 막','수궐음심포경','手厥陰心包經','','中衝 중충 中冲|勞宮 노궁|大陵 대릉|間使 간사|曲澤 곡택'],
+['삼초','三焦','화',0,'몸통 세 부분의 기능','수소양삼초경','手少陽三焦經','','關衝 관충 關冲|液門 액문|中渚 중저|支溝 지구|天井 천정']];
+const TERMS=[['補','보','채워 줌 (허할 때)'],['瀉','사','덜어 냄 (넘칠 때)'],['虛','허','부족함','虚'],['實','실','넘침'],['寒','한','차가움'],['熱','열','뜨거움'],['正格','정격','허할 때 쓰는 처방'],['勝格','승격','실할 때 쓰는 처방'],['寒格','한격','찰 때 쓰는 처방'],['熱格','열격','열이 날 때 쓰는 처방'],['鍼','침','침','針'],['灸','구','뜸'],['經絡','경락','기가 흐르는 길'],['穴','혈','침 놓는 자리'],['井穴','정혈','오수혈 첫째 (손끝·발끝)'],['滎穴','형혈','오수혈 둘째'],['兪穴','수혈','오수혈 셋째','輸穴,腧穴'],['經穴','경혈','오수혈 넷째'],['合穴','합혈','오수혈 다섯째 (팔꿈치·무릎 근처)'],['左','좌','왼쪽'],['右','우','오른쪽'],['手','수','손 (경락 이름 앞)'],['足','족','발 (경락·혈 이름 앞)'],['陰','음','음'],['陽','양','양'],['臟','장','오장 (속이 찬 장기)'],['腑','부','육부 (속이 빈 장기)'],['太陽人','태양인','사상체질 · 肺大肝小 폐대간소'],['少陽人','소양인','사상체질 · 脾大腎小 비대신소'],['太陰人','태음인','사상체질 · 肝大肺小 간대폐소'],['少陰人','소음인','사상체질 · 腎大脾小 신대비소']];
+const M={},ALL=[],PTS=[],BYID={};
+ORD.forEach(e=>ALL.push({t:'오행',id:'e-'+e,h:E[e][0],r:e,e,mean:E[e][1],v:[]}));
+MER.forEach(([k,h,e,yin,mean,full,fullh,v,ps])=>{
+  const m={t:'장부',id:'m-'+k,k,h,r:k,e,yin,mean,full,fullh,v:v?v.split(','):[],p:{},rx:[]};M[k]=m;ALL.push(m);
+  const order=yin?ORD:['금','수','목','화','토'];
+  ps.split('|').forEach((s,i)=>{const [ph,pr,pv]=s.split(' ');const p={t:'혈자리',id:'p-'+ph,h:ph,r:pr,v:pv?pv.split(','):[],m,e:order[i],role:i,rx:[]};m.p[p.e]=p;PTS.push(p);ALL.push(p)});
+});
+TERMS.forEach(([h,r,mean,v])=>ALL.push({t:'용어',id:'t-'+h,h,r,mean,v:v?v.split(','):[]}));
+const TY=[['정','正格','허할 때',e=>[mom(e),KE[e]]],['승','勝格','실할 때',e=>[KE[e],kid(e)]],['한','寒格','찰 때',()=>['화','수']],['열','熱格','열이 날 때',()=>['수','화']]];
+const YP={목:'간',화:'심',토:'비',금:'폐',수:'신'},GP={목:'담',화:'소장',토:'위',금:'대장',수:'방광'};
+const RX=[];
+TY.forEach(([t,th,when,f])=>Object.values(M).forEach(m=>{
+  const [b,s]=f(m.e);
+  const pair=el=>{const P=M[(m.yin?YP:GP)[el]];return P===m?[m.p[el]]:[P.p[el],m.p[el]]};
+  const bo=pair(b),sa=pair(s);
+  const r={t:'처방',id:'r-'+m.k+t,ty:t,name:m.k+t+'격',nameH:m.h+th,short:m.k+b+s,shortH:m.h+E[b][0]+E[s][0],b,s,bo,sa,m,when,flag:bo.length<2||sa.length<2};
+  RX.push(r);ALL.push(r);m.rx.push(r);[...bo,...sa].forEach(p=>p.rx.push(r));
+}));
+ALL.forEach(i=>BYID[i.id]=i);
+let CUS=[];try{CUS=JSON.parse(localStorage.getItem('saam-custom')||'[]')}catch(e){CUS=[]}
+const saveCus=()=>{try{localStorage.setItem('saam-custom',JSON.stringify(CUS));return true}catch(e){return false}};
+const cusItems=()=>CUS.map(c=>({t:'처방',custom:1,id:c.id,name:c.name,nameH:'',short:c.short||'',shortH:'',bo:c.bo.map(x=>BYID[x]).filter(Boolean),sa:c.sa.map(x=>BYID[x]).filter(Boolean),memo:c.memo||'',when:'원장님 처방'}));
+const find=id=>BYID[id]||cusItems().find(c=>c.id===id);
+const blob=i=>[i.h,i.r,...(i.v||[]),i.name,i.nameH,i.short,i.shortH,i.mean,i.memo,i.full,i.fullh,i.t==='혈자리'?i.m.k+'경'+i.e+'혈':''].filter(Boolean).join('|').replace(/\s/g,'');
+const H2K=[];MER.forEach(x=>{H2K.push([x[1],x[0]]);if(x[7])H2K.push([x[7],x[0]])});ORD.forEach(e=>H2K.push([E[e][0],e]));H2K.sort((a,b)=>b[0].length-a[0].length);
+const KEYS=Object.keys(M).sort((a,b)=>b.length-a.length);
+function parse(raw){
+  const q=raw.replace(/\s/g,'');let n=q;H2K.forEach(([h,k])=>{n=n.split(h).join(k)});
+  let mer=null,rest=n;for(const k of KEYS)if(n.startsWith(k)){mer=M[k];rest=n.slice(k.length);break}
+  const els=rest&&[...rest].every(c=>ORD.includes(c))?[...rest]:null;
+  return{q,n,mer:(els||rest==='')?mer:null,els};
+}
+function search(raw){
+  const{q,n,mer,els}=parse(raw),cus=cusItems(),list=[...cus,...ALL],out=[],seen=new Set();let notice='';
+  const add=(arr,g)=>arr.forEach(i=>{if(i&&!seen.has(i.id)){seen.add(i.id);out.push([g,i])}});
+  add(cus.filter(c=>c.short&&(c.short.replace(/\s/g,'')===q||c.short.replace(/\s/g,'')===n)),'원장님 처방');
+  if(mer||els){
+    if(els&&els.length>=2){
+      const ex=RX.filter(r=>r.b===els[0]&&r.s===els[1]&&(!mer||r.m===mer));
+      add(ex,`처방 · 補${els[0]} 瀉${els[1]}`);
+      if(mer&&!ex.length){
+        const same=RX.filter(r=>r.b===els[0]&&r.s===els[1]);
+        notice=`<b>${mer.k}경</b>에는 補${els[0]}(${E[els[0]][0]})·瀉${els[1]}(${E[els[1]][0]}) 처방이 사암침 공식에 없어요. ${same.length?`흘림체로 장부 글자를 다르게 읽었을 수 있어요. 같은 오행 조합 처방은 <b>${same.map(r=>r.name).join(', ')}</b>예요.`:''} 원장님만의 처방이라면 ‘처방 추가’로 등록해 두세요.`;
+        add(same,'같은 오행 조합의 처방');
+      }
+    }
+    if(mer&&!els)add(mer.rx,'처방');
+    if(mer)add([mer],'오장육부');
+    if(els)add([...new Set(els)].map(e=>BYID['e-'+e]),'오행');
+    add(PTS.filter(p=>(!mer||p.m===mer)&&(!els||els.includes(p.e))),mer&&els?`${mer.k}경의 ${els.join('·')}혈`:els?`${els.join('·')}혈 (모든 경락)`:`${mer.k}경의 혈자리`);
+  }
+  add(list.filter(i=>[q,n].some(s=>s&&blob(i).includes(s))),'그 밖의 검색 결과');
+  return{out,notice};
+}
+const ptSpan=(p,c)=>`<span class="pt ${c}"><i>${c==='bo'?'補':'瀉'}</i><span class="hj${hc(p)}">${esc(p.h)}</span>${esc(p.r)}</span>`;
+function row(i){
+  if(i.t==='처방')return `<button class="row rx" data-id="${esc(i.id)}"><span class="rt"><b>${esc(i.name)}</b><span class="hj${hc(i)}">${esc(i.nameH)}</span>${i.short?`<em>약식 ${esc(i.short)} ${esc(i.shortH)}</em>`:''}${i.custom?'<i class="tag">원장님</i>':''}${i.flag?'<i class="tag">확인 필요</i>':''}</span><span class="rp">${i.bo.map(p=>ptSpan(p,'bo')).join('')}${i.sa.map(p=>ptSpan(p,'sa')).join('')}</span></button>`;
+  const sub=i.t==='혈자리'?`${i.m.k}경 · ${i.e}(${E[i.e][0]})혈 · ${ROLE[i.role].split(' ')[0]}`:i.t==='장부'?`${i.e}(${E[i.e][0]}) · ${i.yin?'장 臟':'부 腑'} · ${i.mean}`:i.mean;
+  const v=i.v&&i.v.length?`<span class="var">= ${i.v.map(esc).join(', ')}</span>`:'';
+  return `<button class="row" data-id="${esc(i.id)}"><span class="big hj${hc(i)}">${esc(i.h)}</span><span class="rt"><b>${esc(i.r)} ${v}</b><small>${esc(sub)}</small></span>${WARN[i.h]?'<span class="warnb" aria-label="헷갈리는 글자 주의">!</span>':''}</button>`;
+}
+let tab='처방';
+function tabView(){
+  if(tab==='오행')return `<h3 class="g">오행 五行 · 상생 순서 목→화→토→금→수→목</h3>${ALL.filter(i=>i.t==='오행').map(row).join('')}<p class="hint">상생(서로 살림): 목→화→토→금→수→목 · 상극(누름): 목→토→수→화→금→목</p>`;
+  if(tab==='장부')return `<h3 class="g">오장육부 五臟六腑 + 심포·삼초 (12경락)</h3>${Object.values(M).map(row).join('')}`;
+  if(tab==='처방'){const c=cusItems();return `<div class="chips" style="margin-top:14px"><button class="btn primary" id="add" type="button">＋ 원장님 처방 추가</button></div>${c.length?`<h3 class="g">원장님 처방</h3>${c.map(row).join('')}`:''}${TY.map(([t,th,w])=>`<h3 class="g">${t}격 ${th} · ${w}</h3>${RX.filter(r=>r.ty===t).map(row).join('')}`).join('')}`;}
+  return `${Object.values(M).map(m=>`<h3 class="g">${m.k}경 <span class="hj c-${EC[m.e]}">${m.h}</span>經 혈자리</h3>${PTS.filter(p=>p.m===m).map(row).join('')}`).join('')}<h3 class="g">자주 나오는 용어</h3>${ALL.filter(i=>i.t==='용어').map(row).join('')}`;
+}
+function render(){
+  const raw=$('#q').value.trim();
+  document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-pressed',!raw&&b.dataset.tab===tab));
+  if(!raw){$('#res').innerHTML=`<p class="hint" style="margin-top:12px">차트에 적힌 대로 입력하거나 위 자판을 누르세요. 예시:</p><div class="chips">${['비화목','위화수','담금토','금토','경거'].map(x=>`<button class="chip" data-q="${x}">${x}</button>`).join('')}</div>`+tabView();return}
+  const{out,notice}=search(raw);let html=notice?`<p class="notice">${notice}</p>`:'',g='';
+  out.forEach(([gg,i])=>{if(gg!==g){g=gg;html+=`<h3 class="g">${esc(g)}</h3>`}html+=row(i)});
+  $('#res').innerHTML=html||`<p class="notice">‘${esc(raw)}’에 맞는 항목이 없어요. 장부 한 글자 + 오행 두 글자(예: 비화목)로 입력해 보세요.</p>`;
+}
+const cp=(t,l)=>`<button class="btn" data-copy="${esc(t)}" type="button">${l||'복사'}</button>`;
+const chip=i=>`<button class="chip" data-id="${esc(i.id)}"><span class="hj${hc(i)}">${esc(i.h||i.nameH)}</span>${esc(i.r||i.name)}</button>`;
+function pcard(p){return `<div class="pc"><button class="pch" data-id="${esc(p.id)}"><span class="hj ph${hc(p)}">${esc(p.h)}</span><span class="pr">${esc(p.r)}</span><small>${esc(p.m.k)}경 ${p.e}혈</small></button>${p.v.length?`<small class="var">= ${p.v.map(esc).join(', ')}</small>`:''}${cp(p.h)}</div>`}
+function detail(i){
+  if(i.t==='처방'){
+    const all=[...i.bo,...i.sa].map(p=>p.h).join(', ');
+    return `${i.short?`<div class="hero sh"><p class="lbl">차트 약식</p><div class="hj giant" style="font-size:clamp(84px,26vw,170px)">${i.shortH?`<span class="${hc(i).trim()}">${esc(i.m.h)}</span><span class="c-${EC[i.b]}">${E[i.b][0]}</span><span class="c-${EC[i.s]}">${E[i.s][0]}</span>`:esc(i.short)}</div><div class="read">${esc(i.short)}</div>${i.shortH?cp(i.shortH,'약식 한자 복사'):''}</div>`:''}<p class="kind">${i.custom?'원장님 처방':'사암침 처방 · '+i.when}</p><h2>${esc(i.name)} <span class="hj${hc(i)}">${esc(i.nameH)}</span></h2>
+    <div class="pgrid"><section class="bo"><h3><i>補</i>보 · 채움${i.b?` · <span class="hj c-${EC[i.b]}">${E[i.b][0]}</span> ${i.b}`:''}</h3>${i.bo.map(pcard).join('')}</section><section class="sa"><h3><i>瀉</i>사 · 덜어냄${i.s?` · <span class="hj c-${EC[i.s]}">${E[i.s][0]}</span> ${i.s}`:''}</h3>${i.sa.map(pcard).join('')}</section></div>
+    ${cp(all,`${i.bo.length+i.sa.length}개 한번에 복사`)} <span class="hint">${esc(all)}</span>
+    ${i.flag?`<p class="wbox"><b>확인 필요</b> · 공식대로 하면 같은 혈이 두 번 들어가서 한 혈만 표시했어요. 원장님이 실제로 쓰시는 혈을 확인해 주세요.</p>`:''}
+    ${i.memo?`<p class="wbox"><b>메모</b> · ${esc(i.memo)}</p>`:''}
+    ${i.custom?`<div class="chips"><button class="btn" data-edit="${esc(i.id)}">수정</button><button class="btn danger" data-del="${esc(i.id)}">삭제</button></div>`:''}`;
+  }
+  const len=[...i.h].length,size=len<2?'clamp(120px,46vw,240px)':len<3?'clamp(96px,36vw,200px)':'clamp(72px,26vw,160px)';
+  let info='';
+  if(i.t==='혈자리')info=`<p class="info">${i.m.full} <span class="hj">${i.m.fullh}</span>의 <b>${i.e}(${E[i.e][0]})혈</b> · ${ROLE[i.role]}</p><h3 class="g">이 혈이 들어가는 처방</h3><div class="chips">${i.rx.map(chip).join('')}</div>`;
+  if(i.t==='장부')info=`<p class="info"><b>${i.e}(${E[i.e][0]})</b> · ${i.yin?'장 臟':'부 腑'} · 뜻: ${i.mean}<br>경락: ${i.full} <span class="hj">${i.fullh}</span></p><h3 class="g">${i.k}경 오수혈</h3><div class="chips">${ORD.map(e=>i.p[e])  .map(p=>`<button class="chip" data-id="${p.id}">${p.e} · <span class="hj${hc(p)}">${p.h}</span>${p.r}</button>`).join('')}</div><h3 class="g">${i.k}경 처방</h3><div class="chips">${i.rx.map(chip).join('')}</div>`;
+  if(i.t==='오행'){const ctl=ORD.find(x=>KE[x]===i.e);info=`<p class="info">뜻: ${i.mean}<br>상생: ${mom(i.e)}(${E[mom(i.e)][0]})이 낳아 주고 → ${kid(i.e)}(${E[kid(i.e)][0]})를 낳아요.<br>상극: ${KE[i.e]}(${E[KE[i.e]][0]})에게 눌리고 → ${ctl}(${E[ctl][0]})를 눌러요.</p><h3 class="g">${i.e}혈 (12경락)</h3><div class="chips">${PTS.filter(p=>p.e===i.e).map(p=>`<button class="chip" data-id="${p.id}"><span class="hj${hc(p)}">${p.h}</span>${p.r} · ${p.m.k}경</button>`).join('')}</div>`}
+  if(i.t==='용어')info=`<p class="info">뜻: ${esc(i.mean)}</p>`;
+  return `<div class="hero"><div class="hj giant${hc(i)}" style="font-size:${size}">${esc(i.h)}</div><div class="read">${esc(i.r)}</div>${cp(i.h,'한자 복사')}</div>
+  ${i.v&&i.v.length?`<div class="vars"><p class="lbl">같은 글자, 다른 모양 — 청구 프로그램에 나오는 쪽을 쓰세요</p>${i.v.map(v=>`<div class="vline"><span class="hj vh${hc(i)}">${esc(v)}</span><span>${esc(i.r)}</span>${cp(v)}</div>`).join('')}</div>`:''}
+  ${WARN[i.h]?`<p class="wbox"><b>헷갈리는 글자</b> · ${WARN[i.h]}</p>`:''}${info}`;
+}
+function form(c){
+  const opt=sel=>'<option value="">선택 안 함</option>'+PTS.map(p=>`<option value="${p.id}"${p.id===sel?' selected':''}>${p.h} ${p.r} · ${p.m.k}경 ${p.e}혈</option>`).join('');
+  return `<h2>원장님 처방 ${c?'수정':'추가'}</h2><form id="cf" data-id="${c?esc(c.id):''}"><label>처방 이름<input name="name" required value="${esc(c?.name)}" placeholder="예: 원장님 담금토"></label><label>차트 약식 (검색어)<input name="short" value="${esc(c?.short)}" placeholder="예: 담금토"></label><fieldset class="bo"><legend>補 보 혈자리</legend><select name="b1">${opt(c?.bo[0])}</select><select name="b2">${opt(c?.bo[1])}</select></fieldset><fieldset class="sa"><legend>瀉 사 혈자리</legend><select name="s1">${opt(c?.sa[0])}</select><select name="s2">${opt(c?.sa[1])}</select></fieldset><label>메모<textarea name="memo" rows="3" placeholder="예: 태음인 기본방">${esc(c?.memo)}</textarea></label><button class="btn primary" type="submit">저장</button></form><p class="hint">이 휴대폰의 브라우저에만 저장돼요. 브라우저 기록을 지우거나 기기를 바꾸면 사라질 수 있어요.</p>`;
+}
+let stack=[];
+const show=()=>{const top=stack[stack.length-1];if(!top){$('#sheet').hidden=true;document.body.style.overflow='';return}
+  $('#sb').innerHTML=top.form!==undefined?form(top.form):detail(find(top.id));$('#sheet').hidden=false;document.body.style.overflow='hidden';$('#sheet').scrollTop=0;$('#back').style.visibility=stack.length>1?'visible':'hidden'};
+const open=id=>{if(find(id)){stack.push({id});show()}};
+let tt;const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1800)};
+async function copy(t){try{await navigator.clipboard.writeText(t);toast('복사했어요: '+t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch(_){}a.remove();toast(ok?'복사했어요: '+t:'복사가 막혀 있어요. 글자를 길게 눌러 복사해 주세요.')}}
+const q=$('#q');
+$('#kO').innerHTML=Object.values(M).map(m=>`<button class="key" data-k="${m.k}" type="button"><b class="c-${EC[m.e]}">${m.h}</b><small>${m.k}</small></button>`).join('');
+$('#kE').innerHTML=ORD.map(e=>`<button class="key e" data-k="${e}" type="button"><b class="c-${EC[e]}">${E[e][0]}</b><small>${e}</small></button>`).join('')+'<button class="key fn" data-fn="bs" type="button">⌫ 한 글자</button>';
+q.addEventListener('input',render);
+$('#clr').onclick=()=>{q.value='';render();q.focus()};
+$('#close').onclick=()=>{stack=[];show()};
+$('#back').onclick=()=>{stack.pop();show()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&stack.length){stack=[];show()}});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.copy!==undefined)return copy(b.dataset.copy);
+  if(b.dataset.k){q.value+=b.dataset.k;render();return}
+  if(b.dataset.fn==='bs'){q.value=[...q.value].slice(0,-1).join('');render();return}
+  if(b.dataset.tab){tab=b.dataset.tab;q.value='';render();return}
+  if(b.dataset.q){q.value=b.dataset.q;render();return}
+  if(b.id==='add'){stack.push({form:null});show();return}
+  if(b.dataset.edit){const c=CUS.find(x=>x.id===b.dataset.edit);stack.push({form:c});show();return}
+  if(b.dataset.del){if(b.dataset.sure){CUS=CUS.filter(x=>x.id!==b.dataset.del);saveCus();stack=[];show();render();toast('삭제했어요')}else{b.dataset.sure=1;b.textContent='한 번 더 누르면 삭제'};return}
+  if(b.dataset.id)open(b.dataset.id);
+});
+document.addEventListener('submit',e=>{
+  if(e.target.id!=='cf')return;e.preventDefault();const f=new FormData(e.target),old=e.target.dataset.id;
+  const c={id:old||'c-'+Date.now(),name:f.get('name').trim(),short:f.get('short').trim(),bo:[f.get('b1'),f.get('b2')].filter(Boolean),sa:[f.get('s1'),f.get('s2')].filter(Boolean),memo:f.get('memo').trim()};
+  CUS=old?CUS.map(x=>x.id===old?c:x):[c,...CUS];const ok=saveCus();
+  stack=[{id:c.id}];show();render();toast(ok?'저장했어요':'이 화면에서는 저장이 안 돼요. 새로고침하면 사라져요.');
+});
+render();
+}
+</script>
+</body>
+</html>
