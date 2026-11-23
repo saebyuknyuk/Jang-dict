@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>장선생 한의학 사전</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 /* VOICE: 조용하고 정확한 업무 도구, 먹과 인주
    IDEA: 한의원 차트 — 먹 글씨 한자와 붉은 인주
    PICTURE: 검색창 + 장부·오행 한자 자판, 크게 띄운 정자체 한자
-   COLOUR/TYPE: 흰 종이, 먹색 머리띠, 補는 쪽빛, 瀉는 인주색 / 한자 Noto Serif KR, 글 Noto Sans KR
+   COLOUR/TYPE: 흰 종이, 먹색 머리띠, 補는 쪽빛, 瀉는 인주색 / 한자·글 모두 Noto Sans KR 고딕
    LAYOUT: 한 줄 기둥 760px, 결과 목록, 전체 화면 상세 시트 */
 :root{color-scheme:light dark;--bg:light-dark(#ffffff,#121314);--ink:light-dark(#18191b,#ecebe8);--sub:light-dark(#5d6166,#a6a9ad);--line:light-dark(#e3e3df,#2b2d30);--card:light-dark(#f5f5f2,#1b1d1f);--bo:light-dark(#2944a0,#9cb0ff);--sa:light-dark(#c2311e,#ff8f7c);--bos:light-dark(#eef1fb,#1a2140);--sas:light-dark(#fcefec,#3a1d18);--warn:light-dark(#8a5a00,#f2c46b);--mok:light-dark(#17785a,#5ed1a0);--hwa:light-dark(#c62a1f,#ff7b6c);--to:light-dark(#a87400,#f0c24a);--geum:light-dark(#6c727d,#dde0e5);--su:light-dark(#1c2a52,#a8b8e0);--warns:light-dark(#fff6e0,#33280f)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 'Noto Sans KR',system-ui,sans-serif;overflow-x:clip}
-.hj{font-family:'Noto Serif KR','AppleMyungjo','Batang',serif;font-weight:700}
+.hj{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-weight:700}
 .wrap{max-width:760px;margin:0 auto}
 .c-mok{color:var(--mok)}.c-hwa{color:var(--hwa)}.c-to{color:var(--to)}.c-geum{color:var(--geum)}.c-su{color:var(--su)}
 header .c-mok{color:#5ed1a0}header .c-hwa{color:#ff7b6c}header .c-to{color:#f0c24a}header .c-geum{color:#e4e6ea}header .c-su{color:#a8b8e0}
@@ -36,7 +36,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .keys.el{grid-template-columns:repeat(5,minmax(0,1fr))}
 .key[aria-pressed=true]{background:#f2f1ec;color:#17181a;border-color:#f2f1ec}.key[aria-pressed=true] small{opacity:1}
 .key{min-height:46px;border-radius:8px;border:1px solid #3d4044;background:#232528;color:#f2f1ec;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;font:inherit;padding:2px}
-.key b{font-family:'Noto Serif KR',serif;font-size:18px}
+.key b{font-family:'Noto Sans KR',sans-serif;font-size:18px}
 .key small{font-size:11px;opacity:.8}
 .key.e{background:#3a231d;border-color:#62392f}
 .key.fn{font-size:13px}
