@@ -121,7 +121,7 @@ h2 small{font-size:15px;color:var(--sub);font-weight:400}
 <body>
 <header><div class="wrap">
   <h1><span class="hj">鍼</span>장선생 한의학 사전</h1>
-  <div class="sbox"><input id="q" type="search" placeholder="예: 비화목, 방토목, 금토" autocomplete="off" aria-label="검색"><button class="btn" id="clr" type="button">지움</button></div>
+  <div class="sbox"><input id="q" type="search" enterkeyhint="search" placeholder="예: 비화목, 방토목, 금토" autocomplete="off" aria-label="검색"><button class="btn" id="clr" type="button">지움</button></div>
   <div class="keys" id="kO" aria-label="장부 자판"></div>
   <div class="keys el" id="kE" aria-label="오행 자판"></div>
 </div></header>
@@ -327,6 +327,8 @@ async function copy(t){try{await navigator.clipboard.writeText(t);toast('복사�
 const q=$('#q');
 $('#kO').innerHTML=Object.values(M).map(m=>`<button class="key" data-k="${m.k}" type="button"><b class="c-${EC[m.e]}">${m.h}</b><small>${m.k}</small></button>`).join('');
 $('#kE').innerHTML=ORD.map(e=>`<button class="key e" data-k="${e}" type="button"><b class="c-${EC[e]}">${E[e][0]}</b><small>${e}</small></button>`).join('');
+function toRes(){const sm=matchMedia('(prefers-reduced-motion: reduce)').matches;$('#res').scrollIntoView({behavior:sm?'auto':'smooth',block:'start'})}
+q.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();render();q.blur();setTimeout(toRes,50)}});
 q.addEventListener('input',()=>{document.querySelectorAll('.key').forEach(k=>k.setAttribute('aria-pressed',false));render()});
 $('#clr').onclick=()=>{q.value='';document.querySelectorAll('.key').forEach(k=>k.setAttribute('aria-pressed',false));render();q.focus()};
 $('#close').onclick=()=>{stack=[];show()};
@@ -335,7 +337,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&stack.length){stack
 document.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;
   if(b.dataset.copy!==undefined)return copy(b.dataset.copy);
-  if(b.dataset.k){q.value=b.dataset.k;render();document.querySelectorAll('.key').forEach(k=>k.setAttribute('aria-pressed',k===b));const sm=matchMedia('(prefers-reduced-motion: reduce)').matches;$('#res').scrollIntoView({behavior:sm?'auto':'smooth',block:'start'});return}
+  if(b.dataset.k){q.value=b.dataset.k;render();document.querySelectorAll('.key').forEach(k=>k.setAttribute('aria-pressed',k===b));toRes();return}
     if(b.dataset.tab){tab=b.dataset.tab;q.value='';render();return}
   if(b.dataset.htype){tab='약재';htype=b.dataset.htype;q.value='';stack=[];show();render();document.querySelector('#tabs').scrollIntoView({block:'start'});return}
   if(b.dataset.q){q.value=b.dataset.q;render();return}
