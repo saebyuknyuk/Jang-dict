@@ -103,6 +103,15 @@ form label,fieldset{display:block;margin:14px 0;border:0;padding:0}
 form input,form select,form textarea{display:block;width:100%;font:16px 'Noto Sans KR',sans-serif;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);margin-top:6px;min-height:46px}
 legend{font-weight:700}
 
+.badge{flex:none;font-size:13px;font-weight:700;padding:4px 10px;border-radius:14px;white-space:nowrap}.badge.lg{font-size:17px;padding:6px 18px}
+.t-ty{background:light-dark(#efe7fb,#2d2345);color:light-dark(#5a379c,#cdb8ff)}.t-te{background:light-dark(#e2f2e9,#173326);color:light-dark(#1d6a44,#7fdcaa)}.t-so{background:light-dark(#fde9e2,#3a1d15);color:light-dark(#ad3519,#ff9b80)}.t-se{background:light-dark(#e4ecfb,#192540);color:light-dark(#21479a,#9db8ff)}
+.typs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0 4px}
+.typ{min-height:66px;border-radius:12px;border:2px solid transparent;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.typ b{font-size:18px}.typ small{font-size:13px}.typ[aria-pressed=true]{border-color:currentColor}
+.hn{font-size:19px}.hh{font-size:16px;font-weight:500;color:var(--sub);margin-left:8px}
+.chip.on{background:var(--ink);color:var(--bg)}.typbtn{margin:12px 6px 0 0;border:0;font-weight:700}
+h2 small{font-size:15px;color:var(--sub);font-weight:400}
+@media(max-width:420px){.typs{grid-template-columns:repeat(2,minmax(0,1fr))}}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#17181a;color:#fff;padding:10px 18px;border-radius:22px;z-index:30;font-size:15px;max-width:90vw;opacity:0;transition:opacity .2s;pointer-events:none}
 #toast.on{opacity:1}
 @media(max-width:420px){.keys{grid-template-columns:repeat(4,minmax(0,1fr))}.keys.el{grid-template-columns:repeat(5,minmax(0,1fr))}.pgrid{gap:8px}}
@@ -122,6 +131,7 @@ legend{font-weight:700}
     <button class="tab" data-tab="장부">② 오장육부·인체 부위</button>
     <button class="tab" data-tab="처방">③ 사암침 처방</button>
     <button class="tab" data-tab="한자">④ 꼭 알아야 할 한자</button>
+    <button class="tab" data-tab="약재">⑤ 체질별 약재</button>
   </nav>
   <p class="legend" aria-label="오행 색">한자 색 = 오행 · <span><span class="hj c-mok">木</span>청</span><span><span class="hj c-hwa">火</span>적</span><span><span class="hj c-to">土</span>황</span><span><span class="hj c-geum">金</span>백</span><span><span class="hj c-su">水</span>흑</span></p>
   <main id="res"></main>
@@ -183,6 +193,8 @@ const BODY=[
 ['목·몸통','頸 경 목 (앞쪽)|項 항 목덜미 (뒤쪽)|胸 흉 가슴|乳 유 젖가슴|膈 격 가로막 (가슴과 배 사이)|心下 심하 명치 부근|脇 협 옆구리|腹 복 배|臍 제 배꼽|小腹 소복 아랫배 (가운데)|少腹 소복 아랫배 (양옆)|背 배 등|腰 요 허리|上焦 상초 몸통 윗부분 (심·폐가 있는 곳)|中焦 중초 몸통 가운데 (비·위가 있는 곳)|下焦 하초 몸통 아랫부분 (간·신·방광이 있는 곳)'],
 ['팔다리','肩 견 어깨|臂 비 팔|肘 주 팔꿈치|腕 완 손목|掌 장 손바닥|指 지 손가락|股 고 넓적다리|膝 슬 무릎|脚 각 다리|踝 과 복사뼈|趾 지 발가락'],
 ['몸을 이루는 것','筋 근 힘줄 · 간(肝)과 연결 목|脈 맥 맥, 혈관 · 심(心)과 연결 화|肉 육 살 · 비(脾)와 연결 토|皮毛 피모 피부와 털 · 폐(肺)와 연결 금|骨 골 뼈 · 신(腎)과 연결 수|皮膚 피부 피부|氣 기 기운|血 혈 피|津液 진액 몸의 진액 (침·땀 등)']];
+const HERB=[["갈근","葛根","태음인","","",""],["감초","甘草","소음인","","",""],["강활","羌活","소양인","","",""],["건강","乾薑","소음인","","",""],["건율","乾栗","태음인","","",""],["계내금","鷄內金","소음인","","",""],["계지","桂枝","소음인","","",""],["계피","桂皮","소음인","","",""],["고량강","高良薑","소음인","","가량강",""],["고본","藁本","태음인","","",""],["고삼","苦蔘","소양인","","",""],["곽향","藿香","소음인","","",""],["관동화","款冬花","태음인","","",""],["괄루인","栝樓仁","소양인","","",""],["구기자","枸杞子","소양인","","",""],["국화","菊花","태음인","","",""],["길경","桔梗","태음인","","",""],["남성","南星","소음인","","",""],["내복자","萊菔子","태음인","","",""],["녹각","鹿角","태음인","","",""],["당귀","當歸","소음인","","",""],["대복피","大腹皮","소음인","","",""],["대추","大棗","소음인","","",""],["독활","獨活","소양인","","",""],["두충(염자)","杜仲(鹽炙)","소음인","","",""],["마황","麻黃","태음인","","",""],["맥문동","麥門冬","태음인","","백문동",""],["모려","牡蠣","소양인","","",""],["목단피","牡丹皮","소양인","","",""],["목통","木通","소양인","","",""],["목향","木香","소음인","","",""],["박하","薄荷","소양인","","",""],["반하","半夏","소음인","","",""],["백개자","白芥子","소음인","","",""],["백계근","","소양인","","",""],["백과","白果","태음인","","",""],["백두구","白豆蔻","소음인","","",""],["백렴","白蘞","태음인","","",""],["백부근","百部根","태음인","","",""],["백선피","白鮮皮","태음인","피부","",""],["백수오","白首烏","소음인","","",""],["백자인","柏子仁","태음인","","",""],["백지","白芷","태음인","","",""],["백출","白朮","소음인","","",""],["복령","茯苓","소양인","","",""],["복분자","覆盆子","소양인","","",""],["비파엽","枇杷葉","태음인","","",""],["사군자","使君子","태음인","","",""],["사상자","蛇床子","태음인","","",""],["사인","砂仁","소음인","","",""],["산사육","山査肉","소음인","","",""],["산수유","山茱萸","소양인","","",""],["산약","山藥","태음인","","",""],["삼릉","三稜","소음인","","",""],["상백피","桑白皮","태음인","","",""],["생지황","生地黃","소양인","","",""],["석고","石膏","소양인","","",""],["석창포","石菖蒲","태음인","","",""],["선퇴","蟬退","태음인","","",""],["소백피","","태음인","","",""],["속단","續斷","태음인","","",""],["쇄양","鎖陽","태음인","","",""],["숙지황","熟地黃","소양인","","",""],["승마","升麻","태음인","","",""],["시호","柴胡","소양인","","",""],["신이","辛夷","태음인","","신아",""],["아출","莪朮","소음인","","",""],["여정실","女貞實","태음인","","",""],["연교","連翹","소양인","","",""],["연자육","蓮子肉","태음인","","",""],["오가피","五加皮","태양인","","",""],["오미자","五味子","태음인","","",""],["오약","烏藥","소음인","","",""],["용안육","龍眼肉","태음인","","",""],["우방자","牛蒡子","소양인","","",""],["우슬","牛膝","소양인","","",""],["원지","遠志","태음인","","",""],["위령선","威靈仙","태음인","","",""],["육계","肉桂","소음인","","",""],["육종용주증","肉蓯蓉(酒蒸)","소음인","","",""],["의이인","薏苡仁","태음인","","",""],["익지인","益智仁","소음인","","",""],["인동","忍冬","소양인","","",""],["인삼","人蔘","소음인","","",""],["자소엽","紫蘇葉","소음인","","",""],["자소자","紫蘇子","소음인","","",""],["작약","芍藥","소음인","","",""],["전조","","태음인","","",""],["전호","前胡","소양인","","",""],["제조","","태음인","","",""],["조각자","皂角刺","태음인","","",""],["중대황","","태음인","","",""],["지각","枳殼","소음인","","",""],["지골피","地骨皮","소양인","","",""],["지모","知母","소양인","","",""],["지실","枳實","소음인","","",""],["진피","陳皮","소음인","","",""],["차전자","車前子","소양인","","",""],["창이자","蒼耳子","태음인","","",""],["창출","蒼朮","소음인","","",""],["천궁","川芎","소음인","","",""],["천남성","天南星","소음인","","",""],["천문동","天門冬","태음인","","",""],["청피","靑皮","소음인","","",""],["치자","梔子","소양인","","",""],["택사","澤瀉","소양인","","",""],["토사자주증","菟絲子(酒蒸)","소양인","","",""],["포공영","蒲公英","태음인","","",""],["포부자","炮附子","소음인","","",""],["포황","蒲黃","태음인","","",""],["한인진","韓茵蔯","소음인","","",""],["합환피","合歡皮","소음인","","",""],["해방풍","海防風","소양인","","",""],["행인","杏仁","태음인","","",""],["향부자","香附子","소음인","","",""],["현삼","玄蔘","소양인","","",""],["형개","荊芥","소양인","","",""],["호장근","虎杖根","태음인","","",""],["홍화","紅花","소음인","","",""],["황금","黃芩","태음인","","",""],["황기","黃芪","소음인","","","黃耆"],["황련","黃連","소양인","","",""],["황백","黃柏","소양인","","","黃栢"],["후박","厚朴","소음인","","",""]];
+const TYP=[['태양인','ty'],['태음인','te'],['소양인','so'],['소음인','se']],TC=Object.fromEntries(TYP);
 const M={},ALL=[],PTS=[],BYID={};
 ORD.forEach(e=>ALL.push({t:'오행',id:'e-'+e,h:E[e][0],r:e,e,mean:E[e][1],v:[]}));
 MER.forEach(([k,h,e,yin,mean,full,fullh,v,ps])=>{
@@ -191,6 +203,8 @@ MER.forEach(([k,h,e,yin,mean,full,fullh,v,ps])=>{
   ps.split('|').forEach((s,i)=>{const [ph,pr,pv]=s.split(' ');const p={t:'혈자리',id:'p-'+ph,h:ph,r:pr,v:pv?pv.split(','):[],m,e:order[i],role:i,rx:[]};m.p[p.e]=p;PTS.push(p);ALL.push(p)});
 });
 BODY.forEach(([g,list])=>list.split('|').forEach(x=>{const w=x.split(' ');const h=w.shift(),r=w.shift();let e='';if(ORD.includes(w[w.length-1])&&w.length>1)e=w.pop();ALL.push({t:'부위',id:'b-'+h,h,r,g,e,mean:w.join(' '),v:h==='脇'?['脅']:[]})}));
+HERB.forEach(([n,hh,typ,note,al,v])=>ALL.push({t:'약재',id:'h-'+n,r:n,hh,h:hh||n,typ,note,al:al?al.split(','):[],v:v?v.split(','):[],mean:typ+' 약재'+(note?' '+note:'')}));
+const HERBS=ALL.filter(i=>i.t==='약재').sort((a,b)=>a.r.localeCompare(b.r,'ko'));
 TERMS.forEach(([h,r,mean,v])=>ALL.push({t:'용어',id:'t-'+h,h,r,mean,v:v?v.split(','):[]}));
 const TY=[['정','正格','허할 때',e=>[mom(e),KE[e]]],['승','勝格','실할 때',e=>[KE[e],kid(e)]],['한','寒格','찰 때',()=>['화','수']],['열','熱格','열이 날 때',()=>['수','화']]];
 const YP={목:'간',화:'심',토:'비',금:'폐',수:'신'},GP={목:'담',화:'소장',토:'위',금:'대장',수:'방광'};
@@ -207,7 +221,7 @@ let CUS=[];try{CUS=JSON.parse(localStorage.getItem('saam-custom')||'[]')}catch(e
 const saveCus=()=>{try{localStorage.setItem('saam-custom',JSON.stringify(CUS));return true}catch(e){return false}};
 const cusItems=()=>CUS.map(c=>({t:'처방',custom:1,id:c.id,name:c.name,nameH:'',short:c.short||'',shortH:'',bo:c.bo.map(x=>BYID[x]).filter(Boolean),sa:c.sa.map(x=>BYID[x]).filter(Boolean),memo:c.memo||'',when:'원장님 처방'}));
 const find=id=>BYID[id]||cusItems().find(c=>c.id===id);
-const blob=i=>[i.h,i.r,...(i.v||[]),i.name,i.nameH,i.short,i.shortH,i.alt,i.mean,i.memo,i.full,i.fullh,i.t==='혈자리'?i.m.k+'경'+i.e+'혈':''].filter(Boolean).join('|').replace(/\s/g,'');
+const blob=i=>[i.h,i.r,...(i.v||[]),...(i.al||[]),i.name,i.nameH,i.short,i.shortH,i.alt,i.mean,i.memo,i.full,i.fullh,i.t==='혈자리'?i.m.k+'경'+i.e+'혈':''].filter(Boolean).join('|').replace(/\s/g,'');
 const H2K=[];MER.forEach(x=>{H2K.push([x[1],x[0]]);if(x[7])H2K.push([x[7],x[0]])});ORD.forEach(e=>H2K.push([E[e][0],e]));H2K.sort((a,b)=>b[0].length-a[0].length);
 const AK={...Object.fromEntries(Object.keys(M).map(k=>[k,k])),방:'방광'};H2K.push(['膀','방']);H2K.sort((a,b)=>b[0].length-a[0].length);
 const KEYS=Object.keys(AK).sort((a,b)=>b.length-a.length);
@@ -236,29 +250,39 @@ function search(raw){
     if(els)add([...new Set(els)].map(e=>BYID['e-'+e]),'오행');
     add(PTS.filter(p=>(!mer||p.m===mer)&&(!els||els.includes(p.e))),mer&&els?`${mer.k}경의 ${els.join('·')}혈`:els?`${els.join('·')}혈 (모든 경락)`:`${mer.k}경의 혈자리`);
   }
-  add(list.filter(i=>[q,n].some(s=>s&&blob(i).includes(s))),'그 밖의 검색 결과');
-  return{out,notice};
+  const hit=i=>[q,n].some(s=>s&&blob(i).includes(s));
+  add(HERBS.filter(hit),'약재');
+  add(list.filter(hit),'그 밖의 검색 결과');
+  const ht=[...new Set(out.filter(([g,i])=>i.t==='약재').map(([g,i])=>i.typ))];
+  return{out,notice,ht};
 }
 const shH=i=>i.shortH?`<span class="${hc(i).trim()}">${esc(i.m.skh)}</span><span class="c-${EC[i.b]}">${E[i.b][0]}</span><span class="c-${EC[i.s]}">${E[i.s][0]}</span>`:'';
 const ptSpan=(p,c)=>`<span class="pt ${c}"><i>${c==='bo'?'補':'瀉'}</i><span class="hj${hc(p)}">${esc(p.h)}</span>${esc(p.r)}</span>`;
+const badge=(t,lg)=>`<span class="badge t-${TC[t]}${lg?' lg':''}">${t}</span>`;
 function row(i){
+  if(i.t==='약재'){const sub=[i.hh?'':'한자 확인 필요',i.note,i.al.length?'파일 표기: '+i.al.join(', '):''].filter(Boolean).join(' · ');
+    return `<button class="row" data-id="${esc(i.id)}"><span class="rt"><b class="hn">${esc(i.r)}${i.hh?`<span class="hj hh">${esc(i.hh)}</span>`:''}</b>${sub?`<small>${esc(sub)}</small>`:''}</span>${badge(i.typ)}</button>`}
   if(i.t==='처방')return `<button class="row rx" data-id="${esc(i.id)}"><span class="rt">${i.short?`<b class="hj sk">${shH(i)}</b><b class="sr">${esc(i.short)}</b><em>${esc(i.name)} <span class="hj">${esc(i.nameH)}</span></em>`:`<b>${esc(i.name)}</b>`}${i.custom?'<i class="tag">원장님</i>':''}${i.flag?'<i class="tag">확인 필요</i>':''}</span><span class="rp">${i.bo.map(p=>ptSpan(p,'bo')).join('')}${i.sa.map(p=>ptSpan(p,'sa')).join('')}</span></button>`;
   const sub=i.t==='혈자리'?`${i.m.k}경 · ${i.e}(${E[i.e][0]})혈 · ${ROLE[i.role].split(' ')[0]}`:i.t==='장부'?`${i.e}(${E[i.e][0]}) · ${i.yin?'장 臟':'부 腑'} · ${i.mean}`:i.t==='부위'?`${i.g} · ${i.mean}${i.e?` · ${i.e}(${E[i.e][0]})`:''}`:i.mean;
   const v=i.v&&i.v.length?`<span class="var">= ${i.v.map(esc).join(', ')}</span>`:'';
   return `<button class="row" data-id="${esc(i.id)}"><span class="big hj${hc(i)}">${esc(i.h)}</span><span class="rt"><b>${esc(i.r)} ${v}</b><small>${esc(sub)}</small></span>${WARN[i.h]?'<span class="warnb" aria-label="헷갈리는 글자 주의">!</span>':''}</button>`;
 }
-let tab='처방';
+let tab='처방',htype='태음인';
 function tabView(){
   if(tab==='오행')return `<h3 class="g">오행 五行 · 상생 순서 목→화→토→금→수→목</h3>${ALL.filter(i=>i.t==='오행').map(row).join('')}<p class="hint">상생(서로 살림): 목→화→토→금→수→목 · 상극(누름): 목→토→수→화→금→목</p>`;
   if(tab==='장부')return `<h3 class="g">오장육부 五臟六腑 + 심포·삼초 (12경락)</h3>${Object.values(M).map(row).join('')}${BODY.map(([g])=>`<h3 class="g">인체 부위 · ${g}</h3>${ALL.filter(i=>i.t==='부위'&&i.g===g).map(row).join('')}`).join('')}`;
   if(tab==='처방'){const c=cusItems();return `<div class="chips" style="margin-top:14px"><button class="btn primary" id="add" type="button">＋ 원장님 처방 추가</button></div>${c.length?`<h3 class="g">원장님 처방</h3>${c.map(row).join('')}`:''}${TY.map(([t,th,w])=>`<h3 class="g">${t}격 ${th} · ${w}</h3>${RX.filter(r=>r.ty===t).map(row).join('')}`).join('')}`;}
+  if(tab==='약재'){const CH='ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ',cho=x=>{const c=x.charCodeAt(0)-0xAC00;return c<0||c>11171?'#':CH[Math.floor(c/588)]};
+    const list=HERBS.filter(x=>x.typ===htype);let g='',body='';list.forEach(x=>{const k=cho(x.r);if(k!==g){g=k;body+=`<h3 class="g">${k}</h3>`}body+=row(x)});
+    return `<div class="typs">${TYP.map(([n,c])=>`<button class="typ t-${c}" data-htype="${n}" aria-pressed="${n===htype}"><b>${n}</b><small>${HERBS.filter(x=>x.typ===n).length}종</small></button>`).join('')}</div><h2>${htype} 약재 <small>${list.length}종 · 가나다순</small></h2>${htype==='태양인'?'<p class="hint">한국인에게는 태양인이 드물어서 파일에 약재가 1종뿐이에요.</p>':''}${body}<p class="hint">한의원 엑셀 파일(407줄, 127종)을 바탕으로 정리했어요. 오타로 보이는 가량강·신아·백문동은 고량강·신이·맥문동에 합쳤고, 원래 표기로도 검색돼요. 한자는 파일에 없어서 따로 채운 것이니 한의원에서 확인해 주세요.</p>`}
   return `${Object.values(M).map(m=>`<h3 class="g">${m.k}경 <span class="hj c-${EC[m.e]}">${m.h}</span>經 혈자리</h3>${PTS.filter(p=>p.m===m).map(row).join('')}`).join('')}<h3 class="g">자주 나오는 용어</h3>${ALL.filter(i=>i.t==='용어').map(row).join('')}`;
 }
 function render(){
   const raw=$('#q').value.trim();
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-pressed',!raw&&b.dataset.tab===tab));
   if(!raw){$('#res').innerHTML=`<p class="hint" style="margin-top:12px">차트에 적힌 대로 입력하거나 위 자판을 누르세요. 예시:</p><div class="chips">${['비화목','위화수','담금토','금토','경거'].map(x=>`<button class="chip" data-q="${x}">${x}</button>`).join('')}</div>`+tabView();return}
-  const{out,notice}=search(raw);let html=notice?`<p class="notice">${notice}</p>`:'',g='';
+  const{out,notice,ht}=search(raw);let html=notice?`<p class="notice">${notice}</p>`:'',g='';
+  if(ht.length)html+=`<div>${ht.map(t=>`<button class="btn typbtn t-${TC[t]}" data-htype="${t}">${t} 약재 ${HERBS.filter(x=>x.typ===t).length}종 모두 보기 →</button>`).join('')}</div>`;
   out.forEach(([gg,i])=>{if(gg!==g){g=gg;html+=`<h3 class="g">${esc(g)}</h3>`}html+=row(i)});
   $('#res').innerHTML=html||`<p class="notice">‘${esc(raw)}’에 맞는 항목이 없어요. 장부 한 글자 + 오행 두 글자(예: 비화목)로 입력해 보세요.</p>`;
 }
@@ -266,6 +290,10 @@ const cp=(t,l)=>`<button class="btn" data-copy="${esc(t)}" type="button">${l||'�
 const chip=i=>i.t==='처방'?`<button class="chip" data-id="${esc(i.id)}"><span class="hj">${shH(i)||esc(i.nameH)}</span>${esc(i.short||i.name)} <small>${esc(i.name)}</small></button>`:`<button class="chip" data-id="${esc(i.id)}"><span class="hj${hc(i)}">${esc(i.h||i.nameH)}</span>${esc(i.r||i.name)}</button>`;
 function pcard(p){return `<div class="pc"><button class="pch" data-id="${esc(p.id)}"><span class="hj ph${hc(p)}">${esc(p.h)}</span><span class="pr">${esc(p.r)}</span><small>${esc(p.m.k)}경 ${p.e}혈</small></button>${p.v.length?`<small class="var">= ${p.v.map(esc).join(', ')}</small>`:''}${cp(p.h)}</div>`}
 function detail(i){
+  if(i.t==='약재'){const same=HERBS.filter(x=>x.typ===i.typ);
+    return `<div class="hero"><div class="giant hn" style="font-size:clamp(56px,18vw,110px);font-weight:900">${esc(i.r)}</div>${i.hh?`<div class="hj read" style="font-size:clamp(28px,8vw,44px)">${esc(i.hh)}</div>`:'<p class="hint">한자 확인 필요</p>'}<p>${badge(i.typ,1)}</p><div class="chips" style="justify-content:center">${cp(i.r,'한글 복사')}${i.hh?cp(i.hh,'한자 복사'):''}</div></div>
+    ${i.v.length?`<p class="hint">같은 뜻의 다른 한자: <span class="hj">${i.v.map(esc).join(', ')}</span></p>`:''}${i.note?`<p class="wbox"><b>비고</b> · ${esc(i.note)}</p>`:''}${i.al.length?`<p class="hint">엑셀 파일에 ‘${esc(i.al.join(', '))}’로도 적혀 있어서 하나로 합쳤어요.</p>`:''}
+    <h3 class="g">${i.typ} 약재 전체 ${same.length}종 · 가나다순</h3><div class="chips">${same.map(x=>`<button class="chip${x===i?' on':''}" data-id="${esc(x.id)}">${esc(x.r)}</button>`).join('')}</div>`}
   if(i.t==='처방'){
     const all=[...i.bo,...i.sa].map(p=>p.h).join(', ');
     return `${i.short?`<div class="hero sh"><p class="lbl">차트 약식</p><div class="hj giant" style="font-size:clamp(84px,26vw,170px)">${shH(i)||esc(i.short)}</div><div class="read">${esc(i.short)}</div>${i.shortH?cp(i.shortH,'약식 한자 복사'):''}</div>`:''}<p class="kind">${i.custom?'원장님 처방':'사암침 처방 · '+i.when}</p><h2>${esc(i.name)} <span class="hj${hc(i)}">${esc(i.nameH)}</span></h2>
@@ -309,6 +337,7 @@ document.addEventListener('click',e=>{
   if(b.dataset.copy!==undefined)return copy(b.dataset.copy);
   if(b.dataset.k){q.value=b.dataset.k;render();document.querySelectorAll('.key').forEach(k=>k.setAttribute('aria-pressed',k===b));const sm=matchMedia('(prefers-reduced-motion: reduce)').matches;$('#res').scrollIntoView({behavior:sm?'auto':'smooth',block:'start'});return}
     if(b.dataset.tab){tab=b.dataset.tab;q.value='';render();return}
+  if(b.dataset.htype){tab='약재';htype=b.dataset.htype;q.value='';stack=[];show();render();document.querySelector('#tabs').scrollIntoView({block:'start'});return}
   if(b.dataset.q){q.value=b.dataset.q;render();return}
   if(b.id==='add'){stack.push({form:null});show();return}
   if(b.dataset.edit){const c=CUS.find(x=>x.id===b.dataset.edit);stack.push({form:c});show();return}
